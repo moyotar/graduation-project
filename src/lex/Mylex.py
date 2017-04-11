@@ -1,14 +1,13 @@
-import ply.lex as lex
-from lex import TOKEN
+from ply.lex import TOKEN
 
-tokens = (
+tokens = [
     "Number",
     "Name",
     "String",
     "Eq",
     "Leq",
     "Req",
-)
+]
 
 reserved = {
     "for" : "FOR",
@@ -36,7 +35,7 @@ t_ignore = " \t"
 
 # define comment
 def t_COMMENT(t):
-    r"#.*"
+    r"\#.*"
     
 # define newline
 def t_newline(t):
@@ -49,10 +48,10 @@ def t_Number(t):
     return t
 
 def t_Name(t):
-    r"[a-zA-z_]+\w*"
+    r"[a-zA-Z_]+\w*"
     # a key word?
     t.type = reserved.get(t.value,\
-                          "NAME")
+                          "Name")
     return t
 
 # define string rule
@@ -79,7 +78,7 @@ def t_Req(t):
 # literals
 literals = ["+", "-", "*", "/", "%", ">",
             "<", "=", ":", ";", "{", "}"
-            , "(", ")", "[", "]"]
+            , "(", ")", "[", "]", ","]
 
 # error handling rule
 def t_error(t):
