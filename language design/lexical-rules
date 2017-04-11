@@ -5,12 +5,12 @@ Number = (\d+\.\d+|\d+\.?|\.\d+)(e[+-]?\d+)?
 Name   = [a-zA-z_]+\w*
 
 #字符串
-escape_char = \\(.|\n)
-normal_char = .|\n
+escape_char = \\.
+normal_char = .
 String = "(escape_char|normal_char)*"
 
 #保留字
-Reserve = for|in|if|else|while|func|break|continue|return|and
+Reserved = for|in|if|else|while|func|break|continue|return|and
 		  |or|not|nil|true|false|local
 
 #等于
