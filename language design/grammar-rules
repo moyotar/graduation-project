@@ -1,0 +1,71 @@
+chunk ::= block
+
+block ::= {stat}
+
+stat  ::= if_st|
+	  	  for_st|
+		  while_st|
+		  break_st|
+		  continue_st|
+		  return_st|
+		  assign_st|
+		  local_def_st|
+		  func_def_st|
+		  func_call|
+
+if_st ::= "if" exp ":" block ["else" ":" block] ";"
+
+for_st ::= "for" namelist "in" iterable_type ":" block ";"
+
+iterable_type ::= list|String|dict
+
+while_st ::= "while" exp ":" block ";"
+
+break_st ::= "break"
+
+continue_st ::= "continue"
+
+return_st ::= "return" [explist]
+
+assign_st ::= varlist "=" explist
+
+local_def_st ::= "local" namelist ["=" explist]
+
+func_def_st ::= ["local"] "func" Name "(" name_list ")" ":" block ";"
+
+func_call ::= Name "(" explist ")"
+
+varlist ::= var {"," var}
+
+var ::= Name | dict "[" exp "]" | list "[" exp "]"
+
+namelist ::= Name {"," Name}
+
+explist ::= exp {"," exp}
+
+exp ::= "nil"|
+		"false"|
+		"true"|
+		Number|
+		String ["["exp"]"]|
+		dict|
+		var|
+		func_call|
+		list|
+		exp binop exp|
+		unop exp|
+		"(" exp ")"
+
+list ::= "(" exp "," {exp} ")"
+
+dict ::= "{" [itemlist] "}"
+
+itemlist ::= item {"," item}
+
+item ::= exp ":" exp
+
+binop ::= "+" | "-" | "*" | "/" | "%" |
+	  	  ">" | "<" | Eq | Leq | Req | "or"
+		  | "and"
+
+unop ::= "not" | "-"

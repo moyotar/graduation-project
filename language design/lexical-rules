@@ -1,0 +1,26 @@
+#数值
+Number = (\d+\.\d+|\d+\.?|\.\d+)(e[+-]?\d+)?	
+
+#标识符
+Name   = [a-zA-z_]+\w*
+
+#字符串
+escape_char = \\(.|\n)
+normal_char = .|\n
+String = "(escape_char|normal_char)*"
+
+#保留字
+Reserve = for|in|if|else|while|func|break|continue|return|and
+		  |or|not|nil|true|false|local
+
+#等于
+Eq = ==
+
+#小于等于
+Leq = <=
+
+#大于等于
+Req = >=
+
+#literal chars
+Literals = [-+*/%><=,:;{}()\[\]]
