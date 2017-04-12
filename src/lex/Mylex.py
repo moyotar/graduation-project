@@ -56,11 +56,13 @@ def t_Name(t):
 
 # define string rule
 escape_char = r"\\."
-normal_char = r"."
-String = r'"(escape_char|normal_char)*"'
+normal_char = r'[^"\n]'
+String = r'"' + r'(' + escape_char + \
+         r'|' + normal_char + r')' + \
+         r'*' + r'"'
 @TOKEN(String)
 def t_String(t):
-    print("a literal string: " + t.value)
+    # TODO escape_char
     return t
 
 def t_Eq(t):
