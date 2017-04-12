@@ -13,8 +13,9 @@ data = '''
 ksjdf a __sd b_ a_2_1__ ACKD
 
 # test String
-"ssdfdssmem" "\1\2\n\e" "s'dk\"k\rss\t"
-
+"ssdfdssmem" "\\1\\2\\n\\e" "s'd\\"k\rs"
+"\1\2\3" "" "\t
+"
 # test Reserved
 for in if else while
  func break continue return and
