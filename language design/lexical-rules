@@ -2,11 +2,11 @@
 Number = (\d+\.\d+|\d+\.?|\.\d+)(e[+-]?\d+)?	
 
 #标识符
-Name   = [a-zA-z_]+\w*
+Name   = [a-zA-Z_]+\w*
 
 #字符串
 escape_char = \\.
-normal_char = .
+normal_char = [^"\n]
 String = "(escape_char|normal_char)*"
 
 #保留字
