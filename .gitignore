@@ -1,2 +1,5 @@
-# 省略emacs生成得备份文件
+# emacs back-up files
 *~
+
+# python compiled files
+*.py[cod]
