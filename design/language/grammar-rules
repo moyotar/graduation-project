@@ -37,17 +37,17 @@ func_call ::= Name "(" explist ")"
 
 varlist ::= var {"," var}
 
-var ::= Name | dict "[" exp "]" | list "[" exp "]"
+var ::= Name | Name "[" exp "]"
 
 namelist ::= Name {"," Name}
 
 explist ::= exp {"," exp}
 
-exp ::= "nil"|
+exp ::= "nil"| 
 		"false"|
 		"true"|
 		Number|
-		String ["["exp"]"]|
+		String|
 		dict|
 		var|
 		func_call|
