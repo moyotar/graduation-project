@@ -21,4 +21,5 @@
 20	NEWDICT	创建字典
 21	INDEX	以栈顶元素为索引访问下一个元素（可迭代对象）
 22	LOOP	开始循环
-23	ENDLOOP	结束循环	
+23	ENDLOOP	结束循环
+24 	SETITEM	更改子项,对列表或者字典
