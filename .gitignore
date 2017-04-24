@@ -3,3 +3,8 @@
 
 # python compiled files
 *.py[cod]
+
+# gtags fils
+GPATH
+GRTAGS
+GTAGS
