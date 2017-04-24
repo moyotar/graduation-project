@@ -11,7 +11,7 @@ stat  ::= if_st|
 		  assign_st|
 		  local_def_st|
 		  func_def_st|
-		  func_call|
+		  func_call
 
 if_st ::= "if" exp ":" block ["else" ":" block] ";"
 
@@ -27,17 +27,14 @@ continue_st ::= "continue"
 
 return_st ::= "return" [explist]
 
-assign_st ::= varlist "=" explist
+assign_st ::= namelist "=" explist
+			| Name '[' exp ']' '=' exp
 
 local_def_st ::= "local" namelist ["=" explist]
 
-func_def_st ::= ["local"] "func" Name "(" name_list ")" ":" block ";"
+func_def_st ::= ["local"] "func" Name "(" [namelist] ")" ":" block ";"
 
-func_call ::= Name "(" explist ")"
-
-varlist ::= var {"," var}
-
-var ::= Name | Name "[" exp "]"
+func_call ::= Name "(" [explist] ")"
 
 namelist ::= Name {"," Name}
 
