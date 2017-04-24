@@ -17,7 +17,7 @@ if_st ::= "if" exp ":" block ["else" ":" block] ";"
 
 for_st ::= "for" namelist "in" iterable_type ":" block ";"
 
-iterable_type ::= list|String|dict
+iterable_type ::= list|String|dict|Name
 
 while_st ::= "while" exp ":" block ";"
 
@@ -28,7 +28,7 @@ continue_st ::= "continue"
 return_st ::= "return" [explist]
 
 assign_st ::= namelist "=" explist
-			| Name '[' exp ']' '=' exp
+			| obj_domains '=' exp
 
 local_def_st ::= "local" namelist ["=" explist]
 
@@ -46,7 +46,8 @@ exp ::= "nil"|
 		Number|
 		String|
 		dict|
-		var|
+		Name|
+		obj_domains|
 		func_call|
 		list|
 		exp binop exp|
@@ -66,3 +67,5 @@ binop ::= "+" | "-" | "*" | "/" | "%" |
 		  | "and"
 
 unop ::= "not" | "-"
+
+obj_domains ::= Name '[' exp ']' {'[' exp ']'}
