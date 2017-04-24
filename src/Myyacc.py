@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 
 import ply.yacc as yacc
-from lex.Mylex import tokens
+from Mylex import tokens
 
 # 定义优先级
 precedence = (
-    ('left', '=')
-    ('left', 'AND', 'OR')
-    ('left', '>', '<', 'Eq', 'Leq', 'Req', 'OR'),
+    ('left', '='),
+    ('left', 'AND', 'OR'),
+    ('left', '>', '<', 'Eq', 'Leq', 'Req'),
     ('left', '+', '-'),
     ('left', '*', '/', '%'),
     ('right', 'UMINUS', 'NOT'),   
@@ -44,21 +45,16 @@ def p_stat(p):
 def p_if_st(p):
     '''
     if_st : IF exp ':' block ';'
-          | IF exp ':' block ELSE ':'
-            block ';'    
+          | IF exp ':' block ELSE ':' block ';'    
     '''
     pass
 
 def p_for_st(p):
     '''
-    for_st : FOR namelist IN list ':'
-             block ';'
-           | FOR namelist IN String ':'
-             block ';'   
-           | FOR namelist IN dict ':'
-             block ';'   
-           | FOR namelist IN Name ':'
-             block ';'   
+    for_st : FOR namelist IN list ':' block ';'
+           | FOR namelist IN String ':' block ';'   
+           | FOR namelist IN dict ':' block ';'
+           | FOR namelist IN Name ':' block ';'   
     '''
     pass
 
@@ -83,14 +79,14 @@ def p_return_st(p):
 def p_assign_st(p):
     '''
         assign_st : namelist '=' explist
+                  | obj_domains '=' exp
     '''
     pass
 
 def p_local_def_st(p):
     '''
     local_def_st : LOCAL namelist
-                 | LOCAL namelist
-                   '=' explist     
+                 | LOCAL namelist '=' explist     
     '''
     pass
 
@@ -133,12 +129,24 @@ def p_exp(p):
         | String
         | dict
         | Name
+        | obj_domains
         | func_call
         | list
-        | exp binop exp
         | '-' exp %prec UMINUS
         | NOT exp
         | '(' exp ')'                                        
+        | exp '+' exp
+        | exp '-' exp
+        | exp '*' exp
+        | exp '%' exp
+        | exp '/' exp
+        | exp '>' exp
+        | exp '<' exp
+        | exp Eq exp
+        | exp Leq exp
+        | exp Req exp
+        | exp OR exp
+        | exp AND exp
     '''
     pass
 
@@ -169,20 +177,18 @@ def p_item(p):
     '''
     pass
 
-def p_binop(p):
+def p_obj_domains(p):
     '''
-    binop : '+'
-          | '-'              
-          | '*'      
-          | '/'      
-          | '%'      
-          | '>'      
-          | '<'      
-          | Eq
-          | Leq
-          | Req
-          | OR
-          | AND
-          | '%'
+    obj_domains : Name domains
     '''
     pass
+
+def p_domains(p):
+    '''
+    domains : '[' exp ']'
+            | domains '[' exp ']'    
+    '''
+    pass
+
+def p_error(p):
+    print("Syntax error!")
