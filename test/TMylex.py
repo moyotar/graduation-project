@@ -2,7 +2,7 @@
 import sys
 sys.path.append("../src/")
 
-import lex.Mylex as Mylex
+import Mylex
 import ply.lex as lex
 
 data = '''
