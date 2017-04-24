@@ -23,7 +23,7 @@ reserved = {
     "or" : "OR",
     "not" : "NOT",
     "nil" : "NIL",
-    "ture" : "TRUE",
+    "true" : "TRUE",
     "false" : "FALSE",
     "local" : "LOCAL",
 }
@@ -52,6 +52,12 @@ def t_Name(t):
     # a key word?
     t.type = reserved.get(t.value,\
                           "Name")
+    dt = {
+        "NIL" : None,
+        "FALSE" : False,
+        "TRUE" : True,
+    }
+    t.value = dt.get(t.type, t.value)
     return t
 
 # define string rule
@@ -63,6 +69,7 @@ String = r'"' + r'(' + escape_char + \
 @TOKEN(String)
 def t_String(t):
     # TODO escape_char
+    t.value = t.value[1:-1]
     return t
 
 def t_Eq(t):
