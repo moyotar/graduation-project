@@ -44,7 +44,11 @@ def t_newline(t):
 
 def t_Number(t):
     r"(\d+\.\d+|\d+\.?|\.\d+)(e[+-]?\d+)?"
-    t.value = eval(t.value)
+    value = eval(t.value)
+    t.value = {
+        "value" : value,
+        "type"  : t.type
+    }
     return t
 
 def t_Name(t):
@@ -57,7 +61,11 @@ def t_Name(t):
         "FALSE" : False,
         "TRUE" : True,
     }
-    t.value = dt.get(t.type, t.value)
+    value = dt.get(t.type, t.value)
+    t.value = {
+        "value" : value,
+        "type"  : t.type
+    }
     return t
 
 # define string rule
