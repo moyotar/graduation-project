@@ -20,6 +20,6 @@
 19	NEWLIST	创建列表
 20	NEWDICT	创建字典
 21	INDEX	以栈顶元素为索引访问下一个元素（可迭代对象）
-22	LOOP	开始循环
-23	ENDLOOP	结束循环
+22	SCOPE	开始新的scope
+23	ENDSCO 	结束当前scope
 24 	SETITEM	更改子项,对列表或者字典
