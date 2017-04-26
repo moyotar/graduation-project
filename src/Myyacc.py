@@ -149,8 +149,14 @@ def deal_exp_len2(p):
         # obj_domains
         orders_list = p[1]["orders_list"]
         name = p[1]["Name"]
-        
-        
+        res_orders = res['orders']
+        # 先把要做元素访问的对象load进操作栈
+        res_orders.append("".join(["load\t", str(name)]))
+        for exp_orders in orders_list:
+            # 依次加载每个exp的值进栈，然后执行index指令
+            res_orders += exp_orders
+            res_orders.append('index')
+
 def deal_exp_len3(p):
     pass
 
