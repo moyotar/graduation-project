@@ -167,8 +167,35 @@ def deal_exp_len3(p):
         p[0]['orders'].append('not')
         
 def deal_exp_len4(p):
-    pass
-
+    if p[1] == '(':
+        p[0] = p[2]
+        return
+    p[0] = {'orders' : []}
+    if p[2] in ['>=', '>']:
+        # 对调位置，转换成小于或则和小于等于
+        p[0]['orders'] += p[1]['orders']
+        p[0]['orders'] += p[3]['orders']
+        if p[2] == '>=':
+            p[0]['orders'].append('le')
+        else:
+            p[0]['orders'].append('lt')
+        return
+    p[0]['orders'] += p[3]['orders']
+    p[0]['orders'] += p[1]['orders']
+    dt = {
+        '+' : 'add',
+        '-' : 'sub',
+        '*' : 'times',
+        '/' : 'div',
+        '%' : 'mod',
+        '<' : 'lt',
+        '==': 'lq',             # Eq
+        '<=': 'le',             # Leq
+        'or': 'or',
+        'and' : 'and',
+    }
+    p[0]['orders'].append(dt[p[2]])
+        
 def p_exp(p):
     '''
     exp : NIL
@@ -183,7 +210,7 @@ def p_exp(p):
         | list
         | '-' exp %prec UMINUS
         | NOT exp
-        | '(' exp ')'                                        
+        | '(' exp ')'
         | exp '+' exp
         | exp '-' exp
         | exp '*' exp
@@ -204,6 +231,7 @@ def p_exp(p):
         deal_exp_len3(p)
     else:
         deal_exp_len4(p)
+    p[0]['type'] = 'exp'
 
 def p_list(p):
     '''
