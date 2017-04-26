@@ -54,7 +54,7 @@ exp ::= "nil"|
 		unop exp|
 		"(" exp ")"
 
-list ::= "(" exp "," {exp} ")"
+list ::= "[" {exp} "]"
 
 dict ::= "{" [itemlist] "}"
 
