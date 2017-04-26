@@ -242,8 +242,17 @@ def p_list(p):
         'type' : 'list',
         'orders' : [],
     }
-    
-
+    if len(p) == 3:
+        # 创建空list，即元素数个数为0
+        p[0]['orders'].append('newlist\t0')
+    else:
+        # 把exp都加载入操作栈，然后newlist操作
+        orders_list = p[2]['orders_list'].reverse()
+        for orders in orders_list:
+            p[0]['orders'] += orders
+        p[0]['orders'].append(''.join(['newlist\t', \
+                                      str(len(orders_list))]))
+        
 def p_dict(p):
     '''
     dict : '{' '}'
