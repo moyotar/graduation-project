@@ -13,16 +13,6 @@ precedence = (
     ('right', 'UMINUS', 'NOT'),   
 )
 
-# ---------------------------------------------------
-# 直接在语义动作里面做代码自动生成
-# 每条指令有以下两种格式：
-# 1. opcode '\t' operand
-# 2. opcode
-# 所有opcode参见指令设计文档instructions
-# 如果有operand部分，以tab字符隔开其和opcode,如指令格式1
-# 归约生成时指令存放在p[0]的order字段中
-# ---------------------------------------------------
-
 def p_chunk(p):
     'chunk : block'
     pass
@@ -83,9 +73,7 @@ def p_continue_st(p):
     pass
 
 def p_return_st(p):
-    '''return_st : RETURN ';'
-                 | RETURN explist ';'
-    '''
+    'return_st : RETURN'
     pass
 
 def p_assign_st(p):
@@ -129,32 +117,7 @@ def p_explist(p):
     '''
     explist : exp
             | explist ',' exp
-    ''' 
-    pass
-
-def deal_exp_len2(p):
-    res = {
-        "orders" : []
-    }
-    tp = p[1]["type"]
-    if tp in ['NIL', 'FALSE', 'TRUE', 'Number', 'String']:
-        # 常量，指令push
-        res["orders"].append("".join(["push\t", str(p[1]["value"])]))
-    elif tp in ['list', 'dict', 'func_call']:
-        res["orders"] = p[1]["orders"]
-    elif tp == 'Name':
-        # 变量, load
-        res["orders"].append("".join(["load\t", str(p[1]["value"])]))
-    else:
-        # obj_domains
-        orders_list = p[1]["orders_list"]
-        name = p[1]["Name"]
-        
-        
-def deal_exp_len3(p):
-    pass
-
-def deal_exp_len4(p):
+    '''
     pass
 
 def p_exp(p):
@@ -185,13 +148,7 @@ def p_exp(p):
         | exp OR exp
         | exp AND exp
     '''
-    length = len(p)
-    if length == 2:
-        deal_exp_len2(p)
-    elif length == 3:
-        deal_exp_len3(p)
-    else:
-        deal_exp_len4(p)
+    pass
 
 def p_list(p):
     '''
