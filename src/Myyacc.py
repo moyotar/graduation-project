@@ -156,10 +156,16 @@ def deal_exp_len2(p):
             # 依次加载每个exp的值进栈，然后执行index指令
             res_orders += exp_orders
             res_orders.append('index')
-
+    p[0] = res
+            
 def deal_exp_len3(p):
-    pass
-
+    # 处理负号和not
+    p[0] = {'orders' : p[1]['orders']}
+    if p[1] == '-':
+        p[0]['orders'].append('unm')
+    else:
+        p[0]['orders'].append('not')
+        
 def deal_exp_len4(p):
     pass
 
