@@ -306,14 +306,27 @@ def p_obj_domains(p):
     '''
     obj_domains : Name domains
     '''
-    pass
+    p[0] = {
+        TYPE : 'obj_domains',
+        ORDERS : [],
+    }
+    p[0][ORDERS].append([''.join(['load\t', p[1]['value']])])
+    p[0][ORDERS] += p[2][ORDERS]
 
 def p_domains(p):
     '''
     domains : '[' exp ']'
             | domains '[' exp ']'    
     '''
-    pass
+    p[0] = {
+        TYPE : 'domains',
+        ORDERS : [],
+    }
+    if p[1] == '[':
+        p[0][ORDERS].append(p[2][ORDERS])
+    else:
+        p[0][ORDERS] = p[1][ORDERS]
+        p[0][ORDERS].append(p[3][ORDERS])
 
 def p_error(p):
     print("Syntax error!")
