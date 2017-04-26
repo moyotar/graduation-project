@@ -136,7 +136,15 @@ def p_explist(p):
     explist : exp
             | explist ',' exp
     ''' 
-    pass
+    p[0] = {
+        TYPE : 'explist',
+        ORDERS : [],
+    }
+    if len(p) == 2:
+        p[0][ORDERS].append(p[1][ORDERS])
+    else:
+        p[0][ORDERS] = p[1][ORDERS]
+        p[0][ORDERS].append(p[3][ORDERS])
 
 def deal_exp_len2(p):
     res = {
