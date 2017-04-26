@@ -235,10 +235,14 @@ def p_exp(p):
 
 def p_list(p):
     '''
-    list : '(' exp ',' ')'
-         | '(' exp ',' explist ')'
+    list : '[' ']'
+         | '[' explist ']'
     '''
-    pass
+    p[0] = {
+        'type' : 'list',
+        'orders' : [],
+    }
+    
 
 def p_dict(p):
     '''
