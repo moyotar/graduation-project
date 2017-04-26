@@ -25,7 +25,7 @@ break_st ::= "break"
 
 continue_st ::= "continue"
 
-return_st ::= "return" [explist]
+return_st ::= "return" [explist] ';'
 
 assign_st ::= namelist "=" explist
 			| obj_domains '=' exp
