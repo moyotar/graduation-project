@@ -131,8 +131,16 @@ def p_namelist(p):
     namelist : Name
              | namelist ',' Name
     '''
-    pass
-
+    p[0] = {
+        TYPE : 'namelist',
+        VALUE : [],
+    }
+    if len(p) == 2:
+        p[0][VALUE].append(p[1][VALUE])
+    else:
+        p[0][VALUE] = p[1][VALUE]
+        p[0][VALUE].append(p[3][VALUE])
+        
 def p_explist(p):
     '''
     explist : exp
@@ -163,14 +171,14 @@ def deal_exp_len2(p):
         res[VALUE].append("".join(["load\t", str(p[1]["value"])]))
     else:
         # obj_domains
-        orders_list = p[1][VALUE]
-        res_orders = res[VALUE]
+        values_list = p[1][VALUE]
+        res_values = res[VALUE]
         # 先把要做元素访问的对象load进操作栈
-        res_orders += orders_list[0]
-        for exp_orders in orders_list[1:]:
+        res_values += values_list[0]
+        for exp_values in values_list[1:]:
             # 依次加载每个exp的值进栈，然后执行index指令
-            res_orders += exp_orders
-            res_orders.append('index')
+            res_values += exp_values
+            res_values.append('index')
     p[0] = res
             
 def deal_exp_len3(p):
@@ -262,11 +270,11 @@ def p_list(p):
         p[0][VALUE].append('newlist\t0')
     else:
         # 把exp都加载入操作栈，然后newlist操作
-        orders_list = p[2][VALUE].reverse()
-        for orders in orders_list:
-            p[0][VALUE] += orders
+        values_list = p[2][VALUE].reverse()
+        for values in values_list:
+            p[0][VALUE] += values
         p[0][VALUE].append(''.join(['newlist\t', \
-                                      str(len(orders_list))]))
+                                      str(len(values_list))]))
         
 def p_dict(p):
     '''
@@ -283,8 +291,8 @@ def p_dict(p):
     else:
         length = len(p[2][VALUE]) / 2
         # 先加载所有的item入栈
-        p[0][VALUE] = [order for item_orders in p[2][VALUE]
-                        for order in item_orders]
+        p[0][VALUE] = [value for item_values in p[2][VALUE]
+                        for value in item_values]
         # 执行创建dict操作
         p[0][VALUE].append(''.join(['newdict\t', str(length)]))
         
