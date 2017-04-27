@@ -124,8 +124,24 @@ def p_func_call(p):
     func_call : Name '(' ')'
               | Name '(' explist ')'
     '''
-    pass
-
+    p[0] = {
+        TYPE : 'func_call',
+        VALUE : [],
+    }
+    if len(p) == 4:
+        # 0个实参
+        p[0][VALUE].append('push\t0')
+        p[0][VALUE].append(''.join(['call\t', p[1][VALUE]]))
+    else:
+        length = len(p[3][VALUE])
+        # exp逆序入栈
+        p[0][VALUE] = [order for exp_value in p[3][VALUE].reverse()
+                       for order in exp_value]
+        # 实参个数入栈
+        p[0][VALUE].append(''.join(['push\t', str(len(p[3][VALUE]))]))
+        # 函数调用操作
+        p[0][VALUE].append(''.join(['call\t', p[1][VALUE]]))
+        
 def p_namelist(p):
     '''
     namelist : Name
