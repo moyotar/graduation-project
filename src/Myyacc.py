@@ -20,14 +20,16 @@ precedence = (
 # 2. opcode
 # 所有opcode参见指令设计文档instructions
 # 如果有operand部分，以tab字符隔开其和opcode,如指令格式1
-# 归约生成时指令存放在p[0]中
+# ---------------------------------------------------
+
+# ---------------------------------------------------
 # p[0]全部都是一个dict类型，包含两个字段：
-# 1. type 对应的值是字符串，代表类型
-# 2. orders 对应的值是列表，代表和源代码等效的指令段
+# 1. type 类型
+# 2. value 值
 # ---------------------------------------------------
 
 TYPE = 'type'
-ORDERS = 'orders'
+VALUE = 'value'
 
 def p_chunk(p):
     'chunk : block'
@@ -138,31 +140,31 @@ def p_explist(p):
     ''' 
     p[0] = {
         TYPE : 'explist',
-        ORDERS : [],
+        VALUE : [],
     }
     if len(p) == 2:
-        p[0][ORDERS].append(p[1][ORDERS])
+        p[0][VALUE].append(p[1][VALUE])
     else:
-        p[0][ORDERS] = p[1][ORDERS]
-        p[0][ORDERS].append(p[3][ORDERS])
+        p[0][VALUE] = p[1][VALUE]
+        p[0][VALUE].append(p[3][VALUE])
 
 def deal_exp_len2(p):
     res = {
-        ORDERS : []
+        VALUE : []
     }
     tp = p[1][TYPE]
     if tp in ['NIL', 'FALSE', 'TRUE', 'Number', 'String']:
         # 常量，指令push
-        res[ORDERS].append("".join(["push\t", str(p[1]["value"])]))
+        res[VALUE].append("".join(["push\t", str(p[1]["value"])]))
     elif tp in ['list', 'dict', 'func_call']:
-        res[ORDERS] = p[1][ORDERS]
+        res[VALUE] = p[1][VALUE]
     elif tp == 'Name':
         # 变量, load
-        res[ORDERS].append("".join(["load\t", str(p[1]["value"])]))
+        res[VALUE].append("".join(["load\t", str(p[1]["value"])]))
     else:
         # obj_domains
-        orders_list = p[1][ORDERS]
-        res_orders = res[ORDERS]
+        orders_list = p[1][VALUE]
+        res_orders = res[VALUE]
         # 先把要做元素访问的对象load进操作栈
         res_orders += orders_list[0]
         for exp_orders in orders_list[1:]:
@@ -173,28 +175,28 @@ def deal_exp_len2(p):
             
 def deal_exp_len3(p):
     # 处理负号和not
-    p[0] = {ORDERS : p[1][ORDERS]}
+    p[0] = {VALUE : p[1][VALUE]}
     if p[1] == '-':
-        p[0][ORDERS].append('unm')
+        p[0][VALUE].append('unm')
     else:
-        p[0][ORDERS].append('not')
+        p[0][VALUE].append('not')
         
 def deal_exp_len4(p):
     if p[1] == '(':
         p[0] = p[2]
         return
-    p[0] = {ORDERS : []}
+    p[0] = {VALUE : []}
     if p[2] in ['>=', '>']:
         # 对调位置，转换成小于或则和小于等于
-        p[0][ORDERS] += p[1][ORDERS]
-        p[0][ORDERS] += p[3][ORDERS]
+        p[0][VALUE] += p[1][VALUE]
+        p[0][VALUE] += p[3][VALUE]
         if p[2] == '>=':
-            p[0][ORDERS].append('le')
+            p[0][VALUE].append('le')
         else:
-            p[0][ORDERS].append('lt')
+            p[0][VALUE].append('lt')
         return
-    p[0][ORDERS] += p[3][ORDERS]
-    p[0][ORDERS] += p[1][ORDERS]
+    p[0][VALUE] += p[3][VALUE]
+    p[0][VALUE] += p[1][VALUE]
     dt = {
         '+' : 'add',
         '-' : 'sub',
@@ -207,7 +209,7 @@ def deal_exp_len4(p):
         'or': 'or',
         'and' : 'and',
     }
-    p[0][ORDERS].append(dt[p[2]])
+    p[0][VALUE].append(dt[p[2]])
         
 def p_exp(p):
     '''
@@ -253,17 +255,17 @@ def p_list(p):
     '''
     p[0] = {
         TYPE : 'list',
-        ORDERS : [],
+        VALUE : [],
     }
     if len(p) == 3:
         # 创建空list，即元素数个数为0
-        p[0][ORDERS].append('newlist\t0')
+        p[0][VALUE].append('newlist\t0')
     else:
         # 把exp都加载入操作栈，然后newlist操作
-        orders_list = p[2][ORDERS].reverse()
+        orders_list = p[2][VALUE].reverse()
         for orders in orders_list:
-            p[0][ORDERS] += orders
-        p[0][ORDERS].append(''.join(['newlist\t', \
+            p[0][VALUE] += orders
+        p[0][VALUE].append(''.join(['newlist\t', \
                                       str(len(orders_list))]))
         
 def p_dict(p):
@@ -273,18 +275,18 @@ def p_dict(p):
     '''
     p[0] = {
         TYPE : 'dict',
-        ORDERS : []
+        VALUE : []
     }
     if len(p) == 3:
         # 空dict，0个元素
-        p[0][ORDERS].append('newdict\t0')
+        p[0][VALUE].append('newdict\t0')
     else:
-        length = len(p[2][ORDERS]) / 2
+        length = len(p[2][VALUE]) / 2
         # 先加载所有的item入栈
-        p[0][ORDERS] = [order for item_orders in p[2][ORDERS]
+        p[0][VALUE] = [order for item_orders in p[2][VALUE]
                         for order in item_orders]
         # 执行创建dict操作
-        p[0][ORDERS].append(''.join(['newdict\t', str(length)]))
+        p[0][VALUE].append(''.join(['newdict\t', str(length)]))
         
 def p_itemlist(p):
     '''
@@ -293,13 +295,13 @@ def p_itemlist(p):
     '''
     p[0] = {
         TYPE : 'itemlist',
-        ORDERS : []
+        VALUE : []
     }
     if len(p) == 2:
-        p[0][ORDERS].append(p[1][ORDERS])
+        p[0][VALUE].append(p[1][VALUE])
     else:
-        p[0][ORDERS] = p[1][ORDERS]
-        p[0][ORDERS].append(p[3][ORDERS])
+        p[0][VALUE] = p[1][VALUE]
+        p[0][VALUE].append(p[3][VALUE])
 
 def p_item(p):
     '''
@@ -307,7 +309,7 @@ def p_item(p):
     '''
     p[0] = {
         TYPE : 'item',
-        ORDERS : p[3][ORDERS] + p[1][ORDERS]
+        VALUE : p[3][VALUE] + p[1][VALUE]
     }
 
 def p_obj_domains(p):
@@ -316,10 +318,10 @@ def p_obj_domains(p):
     '''
     p[0] = {
         TYPE : 'obj_domains',
-        ORDERS : [],
+        VALUE : [],
     }
-    p[0][ORDERS].append([''.join(['load\t', p[1]['value']])])
-    p[0][ORDERS] += p[2][ORDERS]
+    p[0][VALUE].append([''.join(['load\t', p[1]['value']])])
+    p[0][VALUE] += p[2][VALUE]
 
 def p_domains(p):
     '''
@@ -328,13 +330,13 @@ def p_domains(p):
     '''
     p[0] = {
         TYPE : 'domains',
-        ORDERS : [],
+        VALUE : [],
     }
     if p[1] == '[':
-        p[0][ORDERS].append(p[2][ORDERS])
+        p[0][VALUE].append(p[2][VALUE])
     else:
-        p[0][ORDERS] = p[1][ORDERS]
-        p[0][ORDERS].append(p[3][ORDERS])
+        p[0][VALUE] = p[1][VALUE]
+        p[0][VALUE].append(p[3][VALUE])
 
 def p_error(p):
     print("Syntax error!")
