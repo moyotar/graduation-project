@@ -31,6 +31,10 @@ precedence = (
 TYPE = 'type'
 VALUE = 'value'
 
+# 存储用户函数对应指令代码
+# 序号为0，保留
+ORDERS = ['',]
+
 def p_chunk(p):
     'chunk : block'
     pass
@@ -117,8 +121,45 @@ def p_func_def_st(p):
                 | FUNC Name '(' namelist ')' ':' block ';'
                 | FUNC Name '(' ')' ':' block ';'
     '''
-    pass
-
+    name = namelist = block = None
+    opcode = 'setg'
+    if p[1] == 'LOCAL':
+        opcode = 'setl'
+        name = p[3]
+        if p[5] != ')':
+            namelist = p[5][VALUE]
+            block = p[8]
+        else:
+            block = p[7]
+            namelist = []
+    else:
+        name = p[2]
+        if p[4] != ')':
+            namelist = p[4][VALUE]
+            block = p[7]
+        else:
+            block = p[6]
+            namelist = []
+    func_pre_orders = []
+    for name in namelist:
+        # 进入函数前，先把实参传递给形参，用操作setl
+        func_pre_orders.append(''.join(['setl\t', name[VALUE]]))
+    # record function postion
+    pos = len(ORDERS)
+    ORDERS += func_pre_orders + block[VALUE]
+    p[0] = {
+        TYPE : 'func_def_st',
+        VALUE : []
+    }
+    # 创建一个字典，记录函数必要的信息
+    p[0][VALUE].append(''.join(['push\t', str(pos)]))
+    p[0][VALUE].append('push\tpos')
+    p[0][VALUE].append(''.join(['push\t', str(len(namelist))]))
+    p[0][VALUE].append('push\tparams')
+    p[0][VALUE].append('newdict\t2')
+    # 把函数信息存储到内存
+    p[0][VALUE].append(''.join([opcode, '\t', name[VALUE]]))
+    
 def p_func_call(p):
     '''
     func_call : Name '(' ')'
