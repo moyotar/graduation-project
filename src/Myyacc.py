@@ -151,7 +151,7 @@ def p_for_st(p):
     loop_body.append('load\t*__index__*')
     loop_body.append('lt')
     loop_body.append('test\t2')
-    loop_body.append(''.join(['jmp\t', str(len(p[6][VALUE]+8))]))
+    loop_body.append(''.join(['jmp\t', str(len(p[6][VALUE])+9)]))
     loop_body.append('load\t*__valueList__*')
     loop_body.append('load\t*__keyList__*')
     loop_body.append('load\t*__index__*')
@@ -163,6 +163,8 @@ def p_for_st(p):
     else:
         loop_body.append('pop')
     loop_body += p[6][VALUE]
+    # 循环的最后，执行jmp操作，回到循环开始处
+    loop_body.append(''.join(['jmp\t', str(-len(loop_body))]))
     value.append(''.join(['loop\t', str(len(loop_body)+1)]))
     value += loop_body
     value.append('endloop')
@@ -311,6 +313,7 @@ def p_func_def_st(p):
             block = p[6]
             namelist = []
     func_pre_orders = []
+    namelist.reverse()
     for _name in namelist:
         # 进入函数前，先把实参传递给形参，用操作setl
         func_pre_orders.append(''.join(['setl\t', _name]))
@@ -348,8 +351,7 @@ def p_func_call(p):
         p[0][VALUE].append(''.join(['call\t', p[1][VALUE]]))
     else:
         length = len(p[3][VALUE])
-        # exp逆序入栈
-        p[3][VALUE].reverse()
+        # exp入栈
         p[0][VALUE] = [order for exp_value in p[3][VALUE]
                        for order in exp_value]
         # 实参个数入栈
@@ -501,7 +503,8 @@ def p_list(p):
         p[0][VALUE].append('newlist\t0')
     else:
         # 把exp都加载入操作栈，然后newlist操作
-        values_list = p[2][VALUE].reverse()
+        p[2][VALUE].reverse()
+        values_list = p[2][VALUE]
         for values in values_list:
             p[0][VALUE] += values
         p[0][VALUE].append(''.join(['newlist\t', \
@@ -578,4 +581,4 @@ def p_domains(p):
         p[0][VALUE].append(p[3][VALUE])
 
 def p_error(p):
-    print("Syntax error!")
+    print("Syntax error!"+str(p))
