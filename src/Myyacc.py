@@ -69,7 +69,24 @@ def p_if_st(p):
     if_st : IF exp ':' block ';'
           | IF exp ':' block ELSE ':' block ';'    
     '''
-    pass
+    p[0] = {
+        TYPE : 'if_st',
+        VALUE : [],
+    }
+    block = ['scope'] + p[4][VALUE]
+    length = len(p[4][VALUE]) + 3
+    if p[5] != ';':
+        length += 1
+        block.append('endscope')
+        block.append(''.join(['jmp\t', str(len(p[7][VALUE])+3)]))
+        block.append('scope')
+        block += p[7][VALUE]
+    block.append('endscope')
+    value = p[0][VALUE]
+    value += p[2][VALUE]
+    value.append('test\t2')
+    value.append(''.join(['jmp\t', str(length)]))
+    value += block
 
 def p_for_st(p):
     '''
