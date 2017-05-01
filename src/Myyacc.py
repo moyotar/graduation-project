@@ -112,7 +112,21 @@ def p_local_def_st(p):
     local_def_st : LOCAL namelist
                  | LOCAL namelist '=' explist     
     '''
-    pass
+    p[0] = {
+        TYPE : 'local_def_st',
+        VALUE : [],
+    }
+    namelist = p[2][VALUE]
+    len_namelist = len(namelist)
+    explist = [['push\tNone']] * len_namelist
+    if len(p) > 3:
+        explist = p[4][VALUE]
+        len_exp = len(explist)
+        if len_namelist > len_exp:
+            explist += [['push\tNone']] * (len_namelist - len_exp)
+    for index, name in enumerate(namelist):
+        p[0][VALUE] += explist[index]
+        p[0][VALUE].append(''.join(['setl\t', name]))
 
 def p_func_def_st(p):
     '''
