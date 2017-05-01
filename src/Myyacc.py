@@ -84,11 +84,33 @@ def p_while_st(p):
     '''
     while_st : WHILE exp ':' block ';'
     '''
-    pass
-
+    p[0] = {
+        TYPE : 'while_st',
+        VALUE : [],
+    }
+    value = p[0][VALUE]
+    block = p[4][VALUE]
+    loop_body = []
+    # 循环的主体，先加载exp
+    loop_body += p[2][VALUE]
+    # test, 判断循环条件，为真则指令计数器加2
+    loop_body.append('test\t2')
+    # 如果假，则执行下一条指令，利用jmp跳出循环
+    loop_body.append(''.join(['jmp\t', str(len(block)+2)]))
+    loop_body += block
+    # 循环的最后，执行jmp操作，回到循环开始处
+    loop_body.append(''.join(['jmp\t', str(-len(loop_body))]))
+    # 整个循环的指令：loop + loop_body + endloop
+    value.append(''.join(['loop\t', str(len(loop_body)+1)]))
+    value += loop_body
+    value.append('endloop')
+    
 def p_break_st(p):
     'break_st : BREAK'
-    pass
+    p[0] = {
+        TYPE : 'break_st',
+        VALUE : ['break'],
+    }
 
 def p_continue_st(p):
     'continue_st : CONTINUE'
