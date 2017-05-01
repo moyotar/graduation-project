@@ -92,7 +92,10 @@ def p_break_st(p):
 
 def p_continue_st(p):
     'continue_st : CONTINUE'
-    pass
+    p[0] = {
+        TYPE : 'continue_st',
+        VALUE : ['continue'],
+    }
 
 def p_return_st(p):
     '''return_st : RETURN ';'
