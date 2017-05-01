@@ -37,6 +37,7 @@ ORDERS = ['',]
 
 def p_chunk(p):
     'chunk : block'
+    global ORDERS
     p[0] = []
     p[0].append(''.join(['jmp\t', str(len(ORDERS))]))
     p[0] += ORDERS[1:]
@@ -44,6 +45,8 @@ def p_chunk(p):
     # 程序最后执行return 0
     p[0].append('push\t0')
     p[0].append('return')
+    # 最后，重置ORDERS
+    ORDERS = ['',]
     
 # 定义空产生式
 def p_empty(p):
@@ -308,14 +311,15 @@ def p_func_def_st(p):
             block = p[6]
             namelist = []
     func_pre_orders = []
-    for name in namelist:
+    for _name in namelist:
         # 进入函数前，先把实参传递给形参，用操作setl
-        func_pre_orders.append(''.join(['setl\t', name[VALUE]]))
+        func_pre_orders.append(''.join(['setl\t', _name]))
     # record function postion
+    global ORDERS
     pos = len(ORDERS)
     ORDERS += func_pre_orders + block[VALUE]
     # 函数的最后，自动加上return语句
-    ORDERS.append(['push\tNone', 'return'])
+    ORDERS += ['push\tNone', 'return']
     p[0] = {
         TYPE : 'func_def_st',
         VALUE : []
