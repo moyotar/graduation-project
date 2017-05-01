@@ -86,7 +86,7 @@ def p_while_st(p):
     '''
     p[0] = {
         TYPE : 'while_st',
-        VALUE : [],
+        VALUE : ['scope',],
     }
     value = p[0][VALUE]
     block = p[4][VALUE]
@@ -104,6 +104,7 @@ def p_while_st(p):
     value.append(''.join(['loop\t', str(len(loop_body)+1)]))
     value += loop_body
     value.append('endloop')
+    value.append('endscope')
     
 def p_break_st(p):
     'break_st : BREAK'
