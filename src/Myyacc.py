@@ -78,8 +78,55 @@ def p_for_st(p):
            | FOR namelist IN dict ':' block ';'
            | FOR namelist IN Name ':' block ';'   
     '''
-    pass
-
+    p[0] = {
+        TYPE : 'for_st',
+        VALUE : ['scope'],
+    }
+    value = p[0][VALUE]
+    namelist = p[2][VALUE][0:2]
+    # 先把要迭代的对象压入堆栈
+    if p[4][TYPE] in ['list', 'dict']:
+        value += p[4][VALUE]
+    elif p[4][TYPE] == 'String':
+        value.append(''.join(['push\t', p[4][VALUE]]))
+    else:
+        value.append(''.join(['load\t', p[4][VALUE]]))
+    # ------------------------------------------
+    # for 指令将迭代当前栈顶元素，在内存中生成两个
+    # 列表。
+    # 1. *__keyList__*
+    # 2. *__valueList__*
+    # 此外，还生成两个整形变量
+    # 1. *__index__* 初始值为-1
+    # 2. *__len__*
+    # ------------------------------------------
+    value.append('for')
+    loop_body = []
+    loop_body.append('push\t1')
+    loop_body.append('load\t*__index__*')
+    loop_body.append('add')
+    loop_body.append('setl\t*__index__*')
+    loop_body.append('load\t*__len__*')
+    loop_body.append('load\t*__index__*')
+    loop_body.append('lt')
+    loop_body.append('test\t2')
+    loop_body.append(''.join(['jmp\t', str(len(p[6][VALUE]+8))]))
+    loop_body.append('load\t*__valueList__*')
+    loop_body.append('load\t*__keyList__*')
+    loop_body.append('load\t*__index__*')
+    loop_body.append('index')
+    loop_body.append(''.join(['setl\t', namelist[0]]))
+    loop_body.append('index')
+    if len(namelist) == 2:
+        loop_body.append(''.join(['setl\t', namelist[1]]))
+    else:
+        loop_body.append('pop')
+    loop_body += p[6][VALUE]
+    value.append(''.join(['loop\t', str(len(loop_body)+1)]))
+    value += loop_body
+    value.append('endloop')
+    value.append('endscope')
+    
 def p_while_st(p):
     '''
     while_st : WHILE exp ':' block ';'
@@ -304,12 +351,12 @@ def deal_exp_len2(p):
     tp = p[1][TYPE]
     if tp in ['NIL', 'FALSE', 'TRUE', 'Number', 'String']:
         # 常量，指令push
-        res[VALUE].append("".join(["push\t", str(p[1]["value"])]))
+        res[VALUE].append("".join(["push\t", str(p[1][VALUE])]))
     elif tp in ['list', 'dict', 'func_call']:
         res[VALUE] = p[1][VALUE]
     elif tp == 'Name':
         # 变量, load
-        res[VALUE].append("".join(["load\t", str(p[1]["value"])]))
+        res[VALUE].append("".join(["load\t", str(p[1][VALUE])]))
     else:
         # obj_domains
         values_list = p[1][VALUE]
