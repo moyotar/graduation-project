@@ -293,7 +293,7 @@ def p_func_def_st(p):
     '''
     name = namelist = block = None
     opcode = 'setg'
-    if p[1] == 'LOCAL':
+    if p[1][VALUE] == 'local':
         opcode = 'setl'
         name = p[3]
         if p[5] != ')':
@@ -349,7 +349,8 @@ def p_func_call(p):
     else:
         length = len(p[3][VALUE])
         # exp逆序入栈
-        p[0][VALUE] = [order for exp_value in p[3][VALUE].reverse()
+        p[3][VALUE].reverse()
+        p[0][VALUE] = [order for exp_value in p[3][VALUE]
                        for order in exp_value]
         # 实参个数入栈
         p[0][VALUE].append(''.join(['push\t', str(len(p[3][VALUE]))]))
