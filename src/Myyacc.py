@@ -105,8 +105,34 @@ def p_assign_st(p):
         assign_st : namelist '=' explist
                   | obj_domains '=' exp
     '''
-    pass
-
+    p[0] = {
+        TYPE : 'assign_st',
+        VALUE : []
+    }
+    if p[1][TYPE] == 'namelist':
+        len_namelist = len(namelist)
+        len_exp = len(explist)
+        explist = p[3][VALUE]
+        namelist = p[1][VALUE]
+        if len_namelist > len_exp:
+             explist += [['push\tNone']] * (len_namelist - len_exp)
+        for index, name in enumerate(namelist):
+            p[0][VALUE] += explist[index]
+            p[0][VALUE].append(''.join(['setg\t', name]))
+    else:
+        # 先把值压入堆栈
+        p[0][VALUE] += p[3][VALUE]
+        # 将要赋值的对象加载进栈
+        p[0][VALUE] += p[1][VALUE][0]
+        # 依次index操作，除了最后一项
+        for exp_value in p[1][VALUE][1:-1]:
+            p[0][VALUE] += exp_value
+            # index op
+            p[0][VALUE].append('index')
+        # 执行setitem操作
+        p[0][VALUE] += p[1][VALUE][-1]
+        p[0][VALUE].append('setitem')
+        
 def p_local_def_st(p):
     '''
     local_def_st : LOCAL namelist
@@ -399,7 +425,7 @@ def p_obj_domains(p):
         TYPE : 'obj_domains',
         VALUE : [],
     }
-    p[0][VALUE].append([''.join(['load\t', p[1]['value']])])
+    p[0][VALUE].append([''.join(['load\t', p[1][VALUE]])])
     p[0][VALUE] += p[2][VALUE]
 
 def p_domains(p):
