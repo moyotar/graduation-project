@@ -19,8 +19,43 @@ if _1:
 _1 = false
 else:
 _2 = nil;
+
+# test func
+local func foo(b,c):
+     a = b * c
+     return a;
+;
+foo(1, 3, 4)
+a = foo(1, 3, 4)
+
+func GCD(a,b):
+    if a>=b:
+        if a%b==0:
+             return b;
+        else:
+             return GCD(b, a%b);
+        ;
+    else:
+        return GCD(b,a);
+;
+;
+
+# test while
+a = 0
+while a < 10:
+a = a + 1
+;
+
+# test for
+a = [2,2,2,2,4]
+for key in a:
+   a[key] = key
+;
 '''
 
 lexer = lex.lex(module=Mylex)
 parser = yacc.yacc(module=Myyacc)
-parser.parse(data)
+orders = (parser.parse(data))
+f = open('a.myc', 'w')
+for order in orders:
+    f.write(order+'\n')
