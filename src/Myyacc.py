@@ -98,8 +98,24 @@ def p_return_st(p):
     '''return_st : RETURN ';'
                  | RETURN explist ';'
     '''
-    pass
-
+    p[0] = {
+        TYPE : 'return_st',
+        VALUE : [],
+    }
+    if len(p) == 3:
+        p[0][VALUE].append('push\tNone')
+    else:
+        explist = p[2][VALUE]
+        explist.reverse()
+        len_exp = len(explist)
+        p[0][VALUE] = [order for exp_value in explist
+                       for order in exp_value]
+        if len(explist) > 1:
+            # 以list形式返回
+            p[0][VALUE].append(''.join(['newlist\t', str(len(explist))]))
+    # return op
+    p[0][VALUE].append('return')
+    
 def p_assign_st(p):
     '''
         assign_st : namelist '=' explist
