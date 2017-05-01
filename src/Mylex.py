@@ -77,7 +77,11 @@ String = r'"' + r'(' + escape_char + \
 @TOKEN(String)
 def t_String(t):
     # TODO escape_char
-    t.value = t.value[1:-1]
+    value = t.value[1:-1]
+    t.value = {
+        'type' : 'String',
+        'value' : value,
+    }
     return t
 
 def t_Eq(t):
