@@ -228,6 +228,8 @@ def p_func_def_st(p):
     # record function postion
     pos = len(ORDERS)
     ORDERS += func_pre_orders + block[VALUE]
+    # 函数的最后，自动加上return语句
+    ORDERS.append(['push\tNone', 'return'])
     p[0] = {
         TYPE : 'func_def_st',
         VALUE : []
