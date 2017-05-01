@@ -40,6 +40,7 @@ def p_chunk(p):
     p[0] = []
     p[0].append(''.join(['jmp\t', str(len(ORDERS))]))
     p[0] += ORDERS[1:]
+    p[0] += p[1][VALUE]
     # 程序最后执行return 0
     p[0].append('push\t0')
     p[0].append('return')
@@ -236,10 +237,10 @@ def p_assign_st(p):
         VALUE : []
     }
     if p[1][TYPE] == 'namelist':
-        len_namelist = len(namelist)
-        len_exp = len(explist)
-        explist = p[3][VALUE]
         namelist = p[1][VALUE]
+        len_namelist = len(namelist)
+        explist = p[3][VALUE]
+        len_exp = len(explist)
         if len_namelist > len_exp:
              explist += [['push\tNone']] * (len_namelist - len_exp)
         for index, name in enumerate(namelist):
