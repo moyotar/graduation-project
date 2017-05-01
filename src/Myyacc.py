@@ -62,8 +62,15 @@ def p_stat(p):
             | func_def_st	
             | func_call
     '''	
-    pass
-
+    p[0] = {
+        TYPE : 'stat',
+        VALUE : [],
+    }
+    if p[1][TYPE] == 'func_call':
+        # 函数调用语句，而非表达式，所以需要跟着pop操作
+        p[1][VALUE].append('pop')
+    p[0][VALUE] = p[1][VALUE]
+    
 def p_if_st(p):
     '''
     if_st : IF exp ':' block ';'
