@@ -27,4 +27,6 @@
 26	BREAK	 跳出当前循环
 27	CONTINUE 进入下次循环
 28	LOOP	 开始循环
-29	ENDLOOP	 结束循环 
+29	ENDLOOP	 结束循环
+30	FOR 	 迭代当前栈顶元素
+31	POP		 弹出当前栈顶元素
