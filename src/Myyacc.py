@@ -42,13 +42,21 @@ def p_chunk(p):
 # 定义空产生式
 def p_empty(p):
     'empty :'
-    pass
+    p[0] = {
+        TYPE : 'empty',
+        VALUE : [],
+    }
 
 def p_block(p):
     '''block : empty
              | stat
              | block stat'''
-    pass
+    p[0] = {
+        TYPE : 'block',
+    }
+    p[0][VALUE] = p[1][VALUE]
+    if len(p) == 3:
+        p[0][VALUE] += p[2][VALUE]
 
 def p_stat(p):
     '''stat : if_st
