@@ -416,7 +416,7 @@ def deal_exp_len2(p):
             
 def deal_exp_len3(p):
     # 处理负号和not
-    p[0] = {VALUE : p[1][VALUE]}
+    p[0] = {VALUE : p[2][VALUE]}
     if p[1] == '-':
         p[0][VALUE].append('unm')
     else:
