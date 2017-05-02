@@ -51,6 +51,13 @@ a = [2,2,2,2,4]
 for key in a:
    a[key] = key
 ;
+
+# test list and dict
+ls = [a,[[]]]
+dt = {1:2,2:[], 3:{}}
+
+# test binop
+a = 1<2*1+1 and (2+1)*1 <4
 '''
 
 lexer = lex.lex(module=Mylex)
