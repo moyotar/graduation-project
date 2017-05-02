@@ -5,9 +5,9 @@ from Mylex import tokens
 
 # 定义优先级
 precedence = (
-    ('left', '='),
+    ('nonassoc', '='),
     ('left', 'AND', 'OR'),
-    ('left', '>', '<', 'Eq', 'Leq', 'Req'),
+    ('nonassoc', '>', '<', 'Eq', 'Leq', 'Req'),
     ('left', '+', '-'),
     ('left', '*', '/', '%'),
     ('right', 'UMINUS', 'NOT'),   
@@ -450,7 +450,10 @@ def deal_exp_len4(p):
         'or': 'or',
         'and' : 'and',
     }
-    p[0][VALUE].append(dt[p[2]])
+    key = p[2]
+    if type(p[2]) == type({}):
+        key = p[2][VALUE]
+    p[0][VALUE].append(dt[key])
         
 def p_exp(p):
     '''
