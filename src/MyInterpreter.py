@@ -113,29 +113,41 @@ class MyInterpreter(object):
         return origin['PC'] - self.PC
     
     def op_jmp(self, operand):
-        pass
+        return eval(operand)
 
     def op_lq(self):
-        pass
-
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a==b)
+        
     def op_lt(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a<b)
 
     def op_le(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a<=b)
 
     def op_not(self):
-        pass
+        a = self.operation_stack.pop()
+        self.operation_stack.append(not a)
 
     def op_and(self):
-        pass
-
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(bool(a and b))
+        
     def op_or(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(bool(a or b))
 
     def op_test(self, operand):
-        pass
-
+        if self.operation_stack.pop():
+            return eval(operand)
+        
     def op_newlist(self, operand):
         pass
 
