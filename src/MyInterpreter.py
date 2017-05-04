@@ -149,11 +149,21 @@ class MyInterpreter(object):
             return eval(operand)
         
     def op_newlist(self, operand):
-        pass
-
+        list_len = eval(operand)
+        ls = []
+        for i in xrange(list_len):
+            ls.append(self.operation_stack.pop())
+        self.operation_stack.append(ls)
+        
     def op_newdict(self, operand):
-        pass
-
+        dict_len = eval(operand)
+        dt = {}
+        for i in xrange(dict_len):
+            key = self.operation_stack.pop()
+            value = self.operation_stack.pop()
+            dt[key] = value
+        self.operation_stack.append(dt)
+        
     def op_index(self):
         pass
     
