@@ -13,16 +13,26 @@ class MyInterpreter(object):
         '''
         self.operation_stack = []
         self.call_stack = []
-        self.memory = []
+        self.memory = [{}]
         self.PC = 0
         self.loop_stack = []
         self.orders = []
 
     def op_setg(self, operand):
-        pass
-
+        top_stack = self.operation_stack.pop()
+        memory_depth = len(self.memory)
+        # 依层次查找，如果没有，说明是新定义的全局变量，存储
+        # 在内存0层
+        for i in xrange(memory_depth-1, -1, -1):
+            if self.memory[i].has_key(operand):
+                self.memory[i][operand] = top_stack
+                return
+        self.memory[0][operand] = top_stack
+        
     def op_setl(self, operand):
-        pass
+        # 存储在局部空间
+        top_stack = self.operation_stack.pop()
+        self.memory[-1][operand] = top_stack
 
     def op_push(self, operand):
         pass
