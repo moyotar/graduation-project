@@ -95,15 +95,23 @@ class MyInterpreter(object):
             # 实参个数多于形参，去掉多余的
             self.operation_stack = self.operation_stack[:params-real_params]
         # 保存当前上下文,压入调用堆栈
-        self.call_stack.append(self.PC)
+        self.call_stack.append({
+            'PC' : self.PC,
+            'memory' : len(self.memory),
+            'loop_stack' : len(self.loop_stack),
+        })
         # 创建新的局部存储区
         self.memory.append({})
         # 返回函数地址和当前PC的差值
         return pos - self.PC
     
     def op_return(self):
-        pass
-
+        # 恢复调用处上下文
+        origin = self.call_stack.pop()
+        self.memory = self.memory[:origin['memory']]
+        self.loop_stack = self.loop_stack[:origin['loop_stack']]
+        return origin['PC'] - self.PC
+    
     def op_jmp(self, operand):
         pass
 
