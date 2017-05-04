@@ -170,10 +170,10 @@ class MyInterpreter(object):
         self.operation_stack.append(obj[key])
         
     def op_scope(self):
-        pass
+        self.memory.append({})
 
     def op_endscope(self):
-        pass
+        self.memory.pop()
 
     def op_setitem(self):
         pass
