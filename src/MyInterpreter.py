@@ -198,7 +198,25 @@ class MyInterpreter(object):
         self.loop_stack.pop()
 
     def op_for(self):
-        pass
+        # ------------------------------------------
+        # for 指令将迭代当前栈顶元素，在内存中生成两个
+        # 列表。
+        # 1. *__keyList__*
+        # 2. *__valueList__*
+        # 此外，还生成两个整形变量
+        # 1. *__index__* 初始值为-1
+        # 2. *__len__*
+        # ------------------------------------------
+        local_memory = self.memory[-1]
+        for_obj = self.operation_stack.pop()
+        local_memory['*__len__*'] = len(for_obj)
+        local_memory['*__index__*'] = -1
+        if type(for_obj) == type({}):
+            local_memory['*__keyList__*'] = for_obj.keys()
+            local_memory['*__valueList__*'] = for_obj.values()
+        else:
+            local_memory['*__keyList__*'] = range(len(for_obj))
+            local_memory['*__valueList__*'] = for_obj
 
     def op_pop(self):
         pass
