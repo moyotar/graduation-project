@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import inspect
 
 class MyInterpreter(object):
     def __init__(self):
@@ -17,6 +18,13 @@ class MyInterpreter(object):
         self.PC = 0
         self.loop_stack = []
         self.orders = []
+        # ----------------------
+        # 解释器运行状态：
+        # 0：正常待机
+        # 1：正常运行
+        # 其他：异常待机
+        # ----------------------
+        self.execution_status = 0
         
     # --------------------------------------------------------
     # 内存采用分层机制，以处理变量的作用域，memory[0]代表最外层
@@ -107,6 +115,10 @@ class MyInterpreter(object):
     
     def op_return(self):
         # 恢复调用处上下文
+        if not len(self.call_stack):
+            # 最顶层return，结束运行
+            self.execution_status = self.operation_stack.pop()
+            return
         origin = self.call_stack.pop()
         self.memory = self.memory[:origin['memory']]
         self.loop_stack = self.loop_stack[:origin['loop_stack']]
@@ -222,4 +234,16 @@ class MyInterpreter(object):
         self.operation_stack.pop()
 
     def execute(self, orders):
-        pass
+        self.__init__()
+        self.orders = order
+        self.execution_status = 1
+        while self.execution_status == 1:
+            try:
+                order = self.orders[self.PC]
+                order = order.split('\t')
+                operation = getattr(self, ''.join(['op_', order[0]]), None)
+                delta = operation(*order[1:]) or 1
+                self.PC += delta
+            except Exception, e:
+                print('RuntimeError')
+                break
