@@ -192,10 +192,10 @@ class MyInterpreter(object):
         return self.loop_stack[-1][1] - self.PC
 
     def op_loop(self, operand):
-        pass
+        self.loop_stack.append((self.PC+1, self.PC+eval(operand)))
 
     def op_endloop(self):
-        pass
+        self.loop_stack.pop()
 
     def op_for(self):
         pass
