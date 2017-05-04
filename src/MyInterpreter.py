@@ -48,19 +48,29 @@ class MyInterpreter(object):
         self.operation_stack.append(None)
         
     def op_add(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a+b)
     
     def op_sub(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a-b)
 
     def op_times(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a*b)
     
     def op_div(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a/b)
 
     def op_mod(self):
-        pass
+        a = self.operation_stack.pop()
+        b = self.operation_stack.pop()
+        self.operation_stack.append(a%b)
 
     def op_call(self, operand):
         pass
