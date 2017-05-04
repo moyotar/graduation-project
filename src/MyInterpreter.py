@@ -94,8 +94,12 @@ class MyInterpreter(object):
         else:
             # 实参个数多于形参，去掉多余的
             self.operation_stack = self.operation_stack[:params-real_params]
-        # 返回函数地址
-        return pos
+        # 保存当前上下文,压入调用堆栈
+        self.call_stack.append(self.PC)
+        # 创建新的局部存储区
+        self.memory.append({})
+        # 返回函数地址和当前PC的差值
+        return pos - self.PC
     
     def op_return(self):
         pass
