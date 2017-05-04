@@ -186,10 +186,10 @@ class MyInterpreter(object):
         self.operation_stack.append(-a)
         
     def op_break(self):
-        return self.loop_stack.pop()[0] - self.PC
+        return self.loop_stack[-1][0] - self.PC
 
     def op_continue(self):
-        return self.loop_stack.pop()[1] - self.PC
+        return self.loop_stack[-1][1] - self.PC
 
     def op_loop(self, operand):
         pass
