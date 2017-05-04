@@ -35,11 +35,18 @@ class MyInterpreter(object):
         self.memory[-1][operand] = top_stack
 
     def op_push(self, operand):
-        pass
+        self.operation_stack.append(eval(operand))
 
     def op_load(self, operand):
-        pass
-
+        # 从局部到全局，依层查找要压栈的变量
+        memory_depth = len(self.memory)
+        for i in xrange(memory_depth-1, -1, -1):
+            if self.memory[i].has_key(operand):
+                self.operation_stack.append(self.memory[i][operand])
+                return
+        # 没有找到，说明是未声明定义的变量，默认为None
+        self.operation_stack.append(None)
+        
     def op_add(self):
         pass
     
