@@ -219,7 +219,7 @@ class MyInterpreter(object):
             local_memory['*__valueList__*'] = for_obj
 
     def op_pop(self):
-        pass
+        self.operation_stack.pop()
 
     def execute(self, orders):
         pass
