@@ -17,7 +17,12 @@ class MyInterpreter(object):
         self.PC = 0
         self.loop_stack = []
         self.orders = []
-
+        
+    # --------------------------------------------------------
+    # 内存采用分层机制，以处理变量的作用域，memory[0]代表最外层
+    # ，也就是全局区，每进入新的scope则加一层，作为当前局部区
+    # 所有指令实现函数均以op_为前缀，返回值为PC增量，None代表默认的+1。
+    # --------------------------------------------------------    
     def op_setg(self, operand):
         top_stack = self.operation_stack.pop()
         memory_depth = len(self.memory)
@@ -73,8 +78,25 @@ class MyInterpreter(object):
         self.operation_stack.append(a%b)
 
     def op_call(self, operand):
-        pass
-
+        memory_depth = len(self.memory)
+        func_info = None
+        for i in xrange(memory_depth-1, -1, -1):
+            if self.memory[i].has_key(operand):
+                func_info = self.memory[i][operand]
+                break
+        pos = func_info['pos']
+        params = func_info['params']
+        real_params = self.operation_stack.pop()
+        if params >= real_params:
+            # 形参个数多于实参
+            # 操作堆栈补足None
+            self.operation_stack += [None] * (params - real_params)
+        else:
+            # 实参个数多于形参，去掉多余的
+            self.operation_stack = self.operation_stack[:params-real_params]
+        # 返回函数地址
+        return pos
+    
     def op_return(self):
         pass
 
