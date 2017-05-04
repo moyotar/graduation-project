@@ -165,8 +165,10 @@ class MyInterpreter(object):
         self.operation_stack.append(dt)
         
     def op_index(self):
-        pass
-    
+        key = self.operation_stack.pop()
+        obj = self.operation_stack.pop()
+        self.operation_stack.append(obj[key])
+        
     def op_scope(self):
         pass
 
