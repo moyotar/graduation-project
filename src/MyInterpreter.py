@@ -176,11 +176,15 @@ class MyInterpreter(object):
         self.memory.pop()
 
     def op_setitem(self):
-        pass
+        key = self.operation_stack.pop()
+        obj = self.operation_stack.pop()
+        value = self.operation_stack.pop()
+        obj[key] = value
     
     def op_unm(self):
-        pass
-    
+        a = self.operation_stack.pop()
+        self.operation_stack.append(-a)
+        
     def op_break(self):
         pass
 
