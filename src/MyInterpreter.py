@@ -47,7 +47,11 @@ class MyInterpreter(object):
         self.memory[-1][operand] = top_stack
 
     def op_push(self, operand):
-        self.operation_stack.append(eval(operand))
+        try:
+            value = eval(operand)
+        except Exception:
+            value = operand
+        self.operation_stack.append(value)
 
     def op_load(self, operand):
         # 从局部到全局，依层查找要压栈的变量
@@ -103,7 +107,7 @@ class MyInterpreter(object):
             self.operation_stack = self.operation_stack[:params-real_params]
         # 保存当前上下文,压入调用堆栈
         self.call_stack.append({
-            'PC' : self.PC,
+            'PC' : self.PC + 1,
             'memory' : len(self.memory),
             'loop_stack' : len(self.loop_stack),
         })
@@ -234,14 +238,21 @@ class MyInterpreter(object):
 
     def execute(self, orders):
         self.__init__()
-        self.orders = order
+        self.orders = orders
         self.execution_status = 1
         while self.execution_status == 1:
             try:
                 order = self.orders[self.PC]
                 order = order.split('\t')
                 operation = getattr(self, ''.join(['op_', order[0]]), None)
-                delta = operation(*order[1:]) or 1
+                # print('exec order:', order)
+                delta = operation(*order[1:])
+                if delta == None:
+                    delta = 1
+                # print('self.operation_stack:', self.operation_stack)
+                # print('self.call_stack:', self.call_stack)
+                # print('self.memory:', self.memory)
+                # print('self.loop_stack:', self.loop_stack)
                 self.PC += delta
             except Exception, e:
                 print('RuntimeError')
