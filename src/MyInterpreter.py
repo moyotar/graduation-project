@@ -255,5 +255,5 @@ class MyInterpreter(object):
                 # print('self.loop_stack:', self.loop_stack)
                 self.PC += delta
             except Exception, e:
-                print('RuntimeError')
-                break
+                print('RuntimeError', e)
+                raise RuntimeError
