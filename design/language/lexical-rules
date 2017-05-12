@@ -11,7 +11,7 @@ String = "(escape_char|normal_char)*"
 
 #保留字
 Reserved = for|in|if|else|while|func|break|continue|return|and
-		  |or|not|nil|true|false|local
+		  |or|not|nil|true|false|local|winapi|to_str
 
 #等于
 Eq = ==

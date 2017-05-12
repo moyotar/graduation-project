@@ -11,7 +11,8 @@ stat  ::= if_st|
 		  assign_st|
 		  local_def_st|
 		  func_def_st|
-		  func_call
+		  func_call|
+		  win_call
 
 if_st ::= "if" exp ":" block ["else" ":" block] ";"
 
@@ -36,6 +37,8 @@ func_def_st ::= ["local"] "func" Name "(" [namelist] ")" ":" block ";"
 
 func_call ::= Name "(" [explist] ")"
 
+win_call ::= 'winapi' '('exp, exp, exp, exp')'
+
 namelist ::= Name {"," Name}
 
 explist ::= exp {"," exp}
@@ -49,6 +52,8 @@ exp ::= "nil"|
 		Name|
 		obj_domains|
 		func_call|
+		win_call|
+		'to_str' '(' exp ')'|
 		list|
 		exp binop exp|
 		unop exp|
