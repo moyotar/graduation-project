@@ -26,9 +26,13 @@ reserved = {
     "true" : "TRUE",
     "false" : "FALSE",
     "local" : "LOCAL",
+    "winapi": "WINAPI",
+    "to_str": "TO_STR",
 }
 
 tokens += list(reserved.values())
+
+# winapi('user32.dll', 'FindWindow', [c_char_p, c_char_p], ['sss', 'bbbb'])
 
 # ignore spaces and tab
 t_ignore = " \t"
@@ -76,8 +80,36 @@ String = r'"' + r'(' + escape_char + \
          r'*' + r'"'
 @TOKEN(String)
 def t_String(t):
-    # TODO escape_char
     value = t.value[1:-1]
+    # deal escape_char
+    escape_char_dt ={
+        '\\a' : '\a',
+        '\\b' : '\b',
+        '\\f' : '\f',
+        '\\n' : '\n',
+        '\\r' : '\r',
+        '\\t' : '\t',
+        '\\v' : '\v',
+        '\\"' : '"',
+    }
+    char_list = []
+    length = len(value)
+    index = 0
+    while index < length:
+        char = value[index]
+        if char == '\\':
+            res = escape_char_dt.get(value[index:index+2], None)
+            if res:
+                char_list.append(res)
+                index += 2
+                continue
+            if value[index+1] == 'x':
+                char_list.append(chr(eval(''.join(['0x', value[index+2:index+4]]))))
+                index += 4
+                continue
+        char_list.append(char)
+        index += 1
+    value = ''.join(char_list)
     t.value = {
         'type' : 'String',
         'value' : value,
@@ -103,9 +135,8 @@ literals = ["+", "-", "*", "/", "%", ">",
 
 # error handling rule
 def t_error(t):
-    print("Illegal character '%s'"
+    raise Exception("Illegal character '%s'"
           % t.value[0])
-    t.lexer.skip(1)
 
 # EOF handling rule
 def t_eof(t):
