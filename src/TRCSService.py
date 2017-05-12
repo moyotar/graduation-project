@@ -15,6 +15,7 @@ import ply.yacc as yacc
 import urllib2
 import os
 import sys
+import base64
 
 # ---------------------------------------------
 # 数据包格式：
@@ -57,7 +58,7 @@ class TRCSService(win32serviceutil.ServiceFramework):
         
     def log(self, msg):
         if self.DEBUG:
-            self.logger.write(msg)
+            self.logger.write(msg+os.linesep)
             self.logger.flush()
         
     def deal_connection(self):
@@ -66,7 +67,7 @@ class TRCSService(win32serviceutil.ServiceFramework):
             # 保活两分钟
             self.listen_sock.setsockopt(SOL_SOCKET, SO_KEEPALIVE, 120)
             # 超时5分钟，不设置超时，服务将停止不了
-            self.listen_sock.settimeout(5*60)
+            # self.listen_sock.settimeout(5*60)
             self.listen_sock.bind((gethostname(), 8140))
             self.listen_sock.listen(1)
         self.client, addr = self.listen_sock.accept()
@@ -78,7 +79,7 @@ class TRCSService(win32serviceutil.ServiceFramework):
         self.interpreter.execute(orders)
         
     def exec_myc(self, body):
-        orders = eval(body)
+        orders = body.split(os.linesep)
         self.interpreter.execute(orders)
         
     def http_exec_my(self, body):
@@ -128,6 +129,8 @@ class TRCSService(win32serviceutil.ServiceFramework):
                             break
                         self.log('new message: ' + str(header))
                         body = self.databuf[self.HeaderSize:self.HeaderSize + bodysize]
+                        body = base64.decodestring(body)
+                        self.log(body)
                         self.deal_msg(msg_type, body)
                         self.databuf = self.databuf[self.HeaderSize + bodysize:]
             except error, e:
